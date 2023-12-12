@@ -1,5 +1,5 @@
 "use client";
-import { updateName, updateProfileImage, removeToken } from "@/store/slices/storeSlice";
+import { updateName, updateProfileImage, removeToken,updateAllTasks, updateProfileDetails } from "@/store/slices/storeSlice";
 import { RootState } from "@/types/commonTypes";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -22,8 +22,25 @@ const ProfileComponent = () => {
       navigate.push("/login");
       return;
     }
+    async function fetchTasks(id: string) {
+      try {
+        const response = await fetch(`/api/routes/tasks/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        dispatch(updateAllTasks(data));
+        if(data[0].user){ 
+          if(data[0].user.name) setNewName(data[0].user.name)
+          dispatch(updateProfileDetails(data[0].user))
+        }
+      } catch (e) {
+        console.log("Error while fetching tasks:", e);
+      }
+    }
+    fetchTasks(profileData.id);
   },[navigate,token])
-
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewName(e.target.value);
   };

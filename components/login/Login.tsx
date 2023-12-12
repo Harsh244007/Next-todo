@@ -63,12 +63,13 @@ const LoginComponent: React.FC = () => {
           body: JSON.stringify({ email, password }),
         });
         const res = await response.text();
-        let data = JSON.parse(res);
-        console.log(res, data);
-
+        // console.log(res);
         if (response.status !== 200) {
           setValues({ ...values, passwordError: res, isSubmitting: false });
         } else {
+          const loginMessage = "Login succesful redircting to tasks"
+          setValues({ ...values, email: "", password: "",passwordError:loginMessage, isSubmitting: false });
+          let data = JSON.parse(res);
           dispatch(
             updateProfileDetails({
               name: data.users.name,
@@ -79,7 +80,6 @@ const LoginComponent: React.FC = () => {
           );
           dispatch(setToken(data.token));
           router.push("/tasks");
-          setValues({ ...values, email: "", password: "", isSubmitting: false });
         }
       } catch (error) {
         console.error("Error:", error);
@@ -93,7 +93,7 @@ const LoginComponent: React.FC = () => {
   const signupText = "Or, You can simply";
   return (
     <div className="flex justify-center w-80 sm:w-96 items-center min-h-full">
-      <div className="border border-grey  rounded-md p-6 shadow-md">
+      <div className="border border-grey w-50 md:w-80  rounded-md p-6 shadow-md">
         <h2 className="text-xl font-bold mb-4">Login</h2>
         <form onSubmit={handleSubmit} className="gap-4 flex flex-col">
           <div className="">

@@ -21,10 +21,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
         if (u) jwtUser = u;
       });
     }
-    if (jwtUser?.id != params.id) {
-      return new Response("Invalid Userid or User not allowed.", { status: 404 });
-    }
-    const userWithTask = await TasksModal.find({ user: params.id }, { __v: 0 })
+    const userWithTask = await TasksModal.find({ user: jwtUser?.id }, { __v: 0 })
       .populate({ path: "user", select: { name: 1, _id: 1, email: 1, profileImage: 1 } })
       .lean()
       .exec();

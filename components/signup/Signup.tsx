@@ -38,7 +38,7 @@ const SignupComponent: React.FC = () => {
     let emailError = "";
     let passwordError = "";
 
-    if (!name || name.length < 3 || /[^a-zA-Z]/.test(name)) {
+    if (!name || name.length < 3 || /[^a-zA-Z\s]/.test(name)) {
       nameError = "Name should be at least 3 characters without special characters";
     }
 
@@ -59,10 +59,25 @@ const SignupComponent: React.FC = () => {
     } else {
       setValues({ ...values, nameError: "", emailError: "", passwordError: "", isSubmitting: true });
       try {
-        // Simulated async submission delay
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        console.log("Submitted:", { name, email, password });
-        setValues({ ...values, name: "", email: "", password: "", isSubmitting: false });
+        const response = await fetch("/api/routes/user/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password,name }),
+        });
+        
+        
+        if (response.status !== 201) {
+          const res = await response.text();
+          setValues({ ...values, passwordError: res, isSubmitting: false });
+        }else{
+          const responseMessage = "User Created successfully. Rediecting to login."
+          setValues({ ...values, passwordError: responseMessage, isSubmitting: false });  
+          setTimeout(()=>{
+            router.push("/login")
+          },2000)
+        }
       } catch (error) {
         console.error("Error:", error);
         setValues({ ...values, isSubmitting: false });
@@ -75,7 +90,7 @@ const SignupComponent: React.FC = () => {
 
   return (
     <div className="flex justify-center w-80 sm:w-96 items-center min-h-full">
-      <div className="border border-grey rounded-md p-6 shadow-md">
+      <div className="border border-grey rounded-md p-6 w-50 sm:w-80 shadow-md">
         <h2 className="text-xl font-bold mb-4">Sign Up</h2>
         <form onSubmit={handleSubmit} className="gap-4 flex flex-col">
           <div className="">

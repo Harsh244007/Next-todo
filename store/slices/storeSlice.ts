@@ -4,9 +4,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: storeType = {
   value: 0,
+  // @ts-ignore
   token:
-    typeof window != "undefined" && window.localStorage && window.localStorage?.getItem("token")
-      ? localStorage?.getItem("token")
+    typeof window != "undefined" && window.localStorage && window.localStorage?.getItem("token") && localStorage.getItem("token")
+      ? JSON.parse(localStorage.getItem("token"))
       : null,
   profileData: {
     name: "John Doe",

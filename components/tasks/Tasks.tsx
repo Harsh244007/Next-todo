@@ -17,14 +17,12 @@ const TaskComponent = () => {
 
   const { token, profileData, tasks } = useSelector((state: RootState) => state.store);
   useEffect(() => {
-    if (!token || profileData.id.length < 6) {
+    if (!token) {
       dispatch(removeToken());
       navigate.push("/login");
       return;
     }
     async function fetchTasks(id: string) {
-      if (id.length <= 5) return navigate.push("/login");
-      console.log("me inside");
       try {
         const response = await fetch(`/api/routes/tasks/${id}`, {
           headers: {
