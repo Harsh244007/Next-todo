@@ -8,5 +8,5 @@ export default function Home() {
   const router = useRouter()
   if(!token) router.push("login") 
   else router.push("tasks")
-  return null
+  return <p>Loading</p>
 }
