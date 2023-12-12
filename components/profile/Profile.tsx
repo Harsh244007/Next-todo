@@ -2,7 +2,7 @@
 import { updateName, updateProfileImage, removeToken } from "@/store/slices/storeSlice";
 import { RootState } from "@/types/commonTypes";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SubmitButton } from "../common/Buttons";
 import { CustomInput } from "../common/Input";
@@ -16,11 +16,13 @@ const ProfileComponent = () => {
   const [newName, setNewName] = useState(profileData.name);
   const [newProfileImage, setNewProfileImage] = useState(profileData.profileImage);
   const navigate = useRouter();
-  if (!token) {
-    dispatch(removeToken());
-    navigate.push("/login");
-    return null;
-  }
+  useEffect(()=>{
+    if (!token) {
+      dispatch(removeToken());
+      navigate.push("/login");
+      return;
+    }
+  },[navigate,token])
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewName(e.target.value);
