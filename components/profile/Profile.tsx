@@ -59,7 +59,7 @@ const ProfileComponent = () => {
 
         <Image
           src={newProfileImage}
-          alt={name + "Profile Image"}
+          alt={newName+"Profile Image"}
           width={300}
           height={300}
           className="w-32 h-32 rounded-full object-cover"
