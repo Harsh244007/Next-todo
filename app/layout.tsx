@@ -8,6 +8,7 @@ const inter = Ysabeau_SC({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Task Management App",
   description: "Task Management App with Login/signup.",
+  icons:"./next.svg",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

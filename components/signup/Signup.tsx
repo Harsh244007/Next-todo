@@ -4,8 +4,11 @@ import { validateEmail, validatePassword } from "@/helpers/validations";
 import { LoginFormValuesType } from "@/types/commonTypes";
 import { SubmitButton } from "../common/Buttons";
 import { CustomInput } from "../common/Input";
+import { useRouter } from "next/navigation";
 
 const SignupComponent: React.FC = () => {
+  const router = useRouter();
+
   const [values, setValues] = useState<LoginFormValuesType>({
     name: "",
     email: "",
@@ -22,8 +25,8 @@ const SignupComponent: React.FC = () => {
       ...values,
       [name]: value,
       nameError: "",
-    emailError: "",
-    passwordError: "",
+      emailError: "",
+      passwordError: "",
     });
   };
 
@@ -98,24 +101,39 @@ const SignupComponent: React.FC = () => {
             {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
           </div>
           <div className="">
-            <CustomInput          
+            <CustomInput
               type="password"
               name="password"
               placeholder="Password"
               value={password}
               onChange={handleChange}
               className="w-full p-2 border rounded-md text-black"
-/>
+            />
             {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
           </div>
           <SubmitButton
+            className=""
             type="submit"
+            onClick={() => {}}
             text={isSubmitting ? "Signing Up..." : "Sign Up"}
-            disable={isSubmitting || nameError !== "" || emailError !== "" || passwordError !== ""}
+            disable={
+              isSubmitting ||
+              !password ||
+              !name ||
+              !email ||
+              nameError !== "" ||
+              emailError !== "" ||
+              passwordError !== ""
+            }
           />
           <p className="text-white-500">{signupText}</p>
-          <SubmitButton type="submit" text={isSubmitting ? "Never Mind..." : "Login Back"} disable={isSubmitting} />
         </form>
+        <SubmitButton
+          className=""
+          onClick={() => router.push("login")}
+          text={isSubmitting ? "Never Mind..." : "Login Back"}
+          disable={isSubmitting}
+        />
       </div>
     </div>
   );

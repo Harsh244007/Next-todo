@@ -4,8 +4,14 @@ import { LoginFormValuesType } from "@/types/commonTypes";
 import React, { useDeferredValue, useState } from "react";
 import { SubmitButton } from "../common/Buttons";
 import { CustomInput } from "../common/Input";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setToken, updateProfileDetails } from "@/store/slices/storeSlice";
 
 const LoginComponent: React.FC = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const [values, setValues] = useState<LoginFormValuesType>({
     email: "",
     password: "",
@@ -49,13 +55,37 @@ const LoginComponent: React.FC = () => {
     } else {
       setValues({ ...values, emailError: "", passwordError: "", isSubmitting: true });
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        console.log("Submitted:", { email, password });
-        setValues({ ...values, email: "", password: "", isSubmitting: false });
+        const response = await fetch("/api/routes/user/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        const res = await response.text();
+        let data = JSON.parse(res);
+        console.log(res, data);
+
+        if (response.status !== 200) {
+          setValues({ ...values, passwordError: res, isSubmitting: false });
+        } else {
+          dispatch(
+            updateProfileDetails({
+              name: data.users.name,
+              email: data.users.email,
+              profileImage: data.users.profileImage,
+              id: data.users._id,
+            })
+          );
+          dispatch(setToken(data.token));
+          router.push("/tasks");
+          setValues({ ...values, email: "", password: "", isSubmitting: false });
+        }
       } catch (error) {
         console.error("Error:", error);
         setValues({ ...values, isSubmitting: false });
       }
+      return;
     }
   };
 
@@ -90,13 +120,20 @@ const LoginComponent: React.FC = () => {
             {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
           </div>
           <SubmitButton
+            className=""
             type="submit"
+            onClick={() => {}}
             text={isSubmitting ? "Loginin..." : "Login"}
-            disable={isSubmitting || !email || !password || emailError !== "" || passwordError !== ""}
+            disable={isSubmitting || (emailError !== "" && passwordError !== "")}
           />
           <p className="text-white-500">{signupText}</p>
-          <SubmitButton type="submit" text={isSubmitting ? "Never Mind..." : "Signup"} disable={isSubmitting} />
         </form>
+        <SubmitButton
+          className=""
+          text={isSubmitting ? "Never Mind..." : "Signup"}
+          disable={isSubmitting}
+          onClick={() => router.push("signup")}
+        />
       </div>
     </div>
   );
