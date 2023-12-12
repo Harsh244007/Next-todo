@@ -13,14 +13,14 @@ const ProfileComponent = () => {
 
   const { profileData, token } = useSelector((state: RootState) => state.store);
 
+  const [newName, setNewName] = useState(profileData.name);
+  const [newProfileImage, setNewProfileImage] = useState(profileData.profileImage);
   const navigate = useRouter();
   if (!token) {
     dispatch(removeToken());
     navigate.push("/login");
-    return;
+    return null;
   }
-  const [newName, setNewName] = useState(profileData.name);
-  const [newProfileImage, setNewProfileImage] = useState(profileData.profileImage);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewName(e.target.value);

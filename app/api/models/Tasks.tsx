@@ -16,9 +16,9 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-let TasksModal :TasksModalType;
+let TasksModal: TasksModalType;
 
 if (mongoose.models.tasks) TasksModal = mongoose.models.tasks as TasksModalType;
-else TasksModal = mongoose.model<TaskDocument,TasksModalType>("tasks", userSchema);
+else TasksModal = mongoose.model<TaskDocument, TasksModalType>("tasks", userSchema);
 
 export default TasksModal;
