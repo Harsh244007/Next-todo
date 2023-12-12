@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Ysabeau_SC } from "next/font/google";
+import { Ysabeau_Infant } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 
 
-const Ysabeau_Font = Ysabeau_SC({
+const Ysabeau_Font = Ysabeau_Infant({
   weight: ["300", "400", "500", "600", "700", "800"],
   style: ["normal"],
   subsets: ["latin"],
