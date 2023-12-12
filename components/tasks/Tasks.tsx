@@ -1,9 +1,12 @@
 "use client";
-import { RootState, storeTasksType } from "@/types/commonTypes";
+import { RootState } from "@/types/commonTypes";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { removeToken, updateAllTasks } from "@/store/slices/storeSlice";
+import { removeToken, updateAllTasks, updateProfileDetails } from "@/store/slices/storeSlice";
 import { useEffect, useState, useDeferredValue } from "react";
+import NewTaskComponent from "@/components/common/CreateTask";
+import TaskRender from "./TaskRender";
+import TaskFilter from "./TaskFilter";
 
 const TaskComponent = () => {
   const navigate = useRouter();
@@ -11,9 +14,19 @@ const TaskComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const [showCreateTask, setShowCreateTask] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const deferredSearchTerm = useDeferredValue(searchTerm);
+
+  //new task states
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [newTaskErrorMessage, setNewTaskErrorMessage] = useState("");
+  const [status, setStatus] = useState("To Do");
+  const [filterStatus, setFilterStatus] = useState("All");
+
+  const [updateTasks, setUpdateTasks] = useState(false);
 
   const { token, profileData, tasks } = useSelector((state: RootState) => state.store);
   useEffect(() => {
@@ -30,7 +43,16 @@ const TaskComponent = () => {
           },
         });
         const data = await response.json();
-        dispatch(updateAllTasks(data));
+        // @ts-ignore
+        dispatch(
+          updateProfileDetails({
+            name: data.user.name,
+            profileImage: data.user.profileImage,
+            email: data.user.email,
+            id: data.user._id,
+          })
+        );
+        dispatch(updateAllTasks(data.tasks));
         setLoading(false);
         setError(false);
       } catch (e) {
@@ -40,57 +62,93 @@ const TaskComponent = () => {
       }
     }
     fetchTasks(profileData.id);
-  }, [profileData.id, navigate, token]);
+  }, [profileData.id, updateTasks, navigate, token]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleCreateTask = () => {
-    console.log("Create Task clicked");
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
   };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatus(e.target.value);
+  };
+
+  const reFetchData = ()=>{
+    setUpdateTasks(!updateTasks);
+  }
+  const handleCreateTask = async () => {
+    if (newTaskErrorMessage !== "") setNewTaskErrorMessage("");
+    if (title === "") setNewTaskErrorMessage("Title is Required");
+    if (description === "") setNewTaskErrorMessage("Description is Required");
+    if (status === "") setNewTaskErrorMessage("Status is Required");
+    if (title === "" || description === "" || status === "") return;
+    try {
+      const response = await fetch("/api/routes/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          status,
+          id: profileData.id,
+        }),
+      });
+      console.log(response, "response");
+      if (response.status == 201) {
+        setTitle("");
+        setDescription("");
+        setStatus("In Progress");
+        reFetchData()
+      } else {
+        setError(true);
+        console.error("Error creating task");
+      }
+    } catch (error) {
+      setNewTaskErrorMessage("Error Creating Task.");
+      console.error("Error creating task:", error);
+    }
+  };
+
+  const handleFilterStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterStatus(e.target.value);
+  };
+
   return (
-    <div className="p-4 my-10 bg-slate-400 bg-opacity-50 backdrop-filter-sm min-h-full">
-      <div className="flex flex-wrap justify-center gap-4 md:justify-between items-center mb-4">
-        <input
-          type="text"
-          placeholder="Search..."
-          onChange={handleSearch}
-          value={deferredSearchTerm}
-          className="p-2 border rounded-md text-black"
-          disabled={tasks && tasks.length === 0}
+    <main className="p-4 my-10 w-full max-w-5xl bg-slate-600 bg-opacity-40 backdrop-filter-sm min-h-full">
+      <TaskFilter searchTerm={searchTerm} handleSearch={handleSearch} filterStatus={filterStatus} handleFilterStatusChange={handleFilterStatusChange} showCreateTask={showCreateTask} setShowCreateTask={setShowCreateTask} tasks={tasks} />
+      {showCreateTask && (
+        <NewTaskComponent
+          handleCreateTask={handleCreateTask}
+          handleDescriptionChange={handleDescriptionChange}
+          handleTitleChange={handleTitleChange}
+          handleStatusChange={handleStatusChange}
+          title={title}
+          description={description}
+          status={status}
         />
-        <button onClick={handleCreateTask} className="p-2 bg-blue-500 text-white rounded-md">
-          Create New Task
-        </button>
-      </div>
-      <div>
+      )}
+      {showCreateTask && newTaskErrorMessage !== "" && (
+        <p className="text-red-500 text-bold mb-4 text-xl">{newTaskErrorMessage}</p>
+      )}
+      <section>
         {loading && <p>Loading...</p>}
         {error && <p>Error while fetching tasks. Please try again.</p>}
         {!loading && !error && tasks.length === 0 && <p>No tasks available. Please create one.</p>}
         {!loading && !error && tasks.length > 0 && (
-          <div className="">
-            {tasks
-              .filter((item: storeTasksType) =>
-                searchTerm !== "" ? item.title.toLowerCase().includes(searchTerm.toLowerCase()) : item
-              )
-              .map((task: storeTasksType) => (
-                <div key={task._id} className="cursor-pointer border p-4 mb-4 rounded-md bg-slate-900 text-white">
-                  <div className="flex justify-between">
-                    <h3 className="text-lg font-semibold">{task.title}</h3>
-                    <p className="text-gray-500">{task.status}</p>
-                  </div>
-                  <p>{task.description}</p>
-                  <div className="flex items-center mt-2">
-                    <img src={profileData.profileImage} alt="Profile" className="h-8 w-8 rounded-full mr-2" />
-                    <p>{profileData.name}</p>
-                  </div>
-                </div>
-              ))}
-          </div>
+          <TaskRender reFetchData={reFetchData} filterStatus={filterStatus} deferredSearchTerm={deferredSearchTerm} searchTerm={searchTerm} />
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 export default TaskComponent;

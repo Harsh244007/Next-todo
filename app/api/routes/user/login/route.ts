@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     if (!email || !password) {
       return new Response("Email or password are not there", { status: 405 });
     }
-    const user = await UsersModal.findOne({ email }, { __v: 0 }).populate({ path: "tasks" }).lean().exec();
+    const user = await UsersModal.findOne({ email }, { __v: 0 }).lean().exec();
 
     if (!user) {
       return new Response("User not found", { status: 401 });

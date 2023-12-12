@@ -30,12 +30,13 @@ const ProfileComponent = () => {
           },
         });
         const data = await response.json();
-        dispatch(updateAllTasks(data));
-        if(data[0].user){ 
-          if(data[0].user.name) setNewName(data[0].user.name)
-          dispatch(updateProfileDetails(data[0].user))
-        }
-      } catch (e) {
+        dispatch(
+          updateProfileDetails({ name: data.user.name, profileImage: data.user.profileImage, email: data.user.email, id: data.user._id })
+        );
+        dispatch(updateAllTasks(data.tasks));
+        setNewName(data.user.name)  
+      
+        } catch (e) {
         console.log("Error while fetching tasks:", e);
       }
     }

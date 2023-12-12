@@ -5,7 +5,7 @@ export interface UserDocument extends Document {
   password: string;
   email: string;
   profileImage: string;
-  tasks?: mongoose.Schema.Types.ObjectId[];
+  tasksArray?: [mongoose.Schema.Types.ObjectId];
 }
 
 export type UserModalType = Model<UserDocument>;

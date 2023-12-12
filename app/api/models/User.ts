@@ -13,8 +13,9 @@ const userSchema = new mongoose.Schema(
 );
 
 let UsersModal: UserModalType;
+const userModels =mongoose.models.users
 
-if (mongoose.models.users) UsersModal = mongoose.models.users as UserModalType;
+if (userModels) UsersModal = userModels as UserModalType;
 else UsersModal = mongoose.model<UserDocument, UserModalType>("users", userSchema);
 
 export default UsersModal;

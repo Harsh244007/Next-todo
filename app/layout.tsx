@@ -3,21 +3,27 @@ import { Ysabeau_SC } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 
-const inter = Ysabeau_SC({ subsets: ["latin"] });
+
+const Ysabeau_Font = Ysabeau_SC({
+  weight: ["300", "400", "500", "600", "700", "800"],
+  style: ["normal"],
+  subsets: ["latin"],
+  variable: "--font-ysabeau",
+});
 
 export const metadata: Metadata = {
   title: "Task Management App",
   description: "Task Management App with Login/signup.",
-  icons:"./next.svg",
+  icons: "./next.svg",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={[Ysabeau_Font.variable, Ysabeau_Font.className].join(" ")}>
         <StoreProvider>
-          {children}
-          </StoreProvider>
+          {props.children}
+        </StoreProvider>
       </body>
     </html>
   );

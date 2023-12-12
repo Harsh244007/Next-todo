@@ -4,13 +4,16 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: storeType = {
   value: 0,
-  // @ts-ignore
   token:
-    typeof window != "undefined" && window.localStorage && window.localStorage?.getItem("token") && localStorage.getItem("token")
-      ? JSON.parse(localStorage.getItem("token"))
+    typeof window != "undefined" &&
+    window.localStorage &&
+    window.localStorage?.getItem("token") &&
+    localStorage.getItem("token")
+      ? // @ts-ignore
+        JSON.parse(localStorage.getItem("token"))
       : null,
   profileData: {
-    name: "John Doe",
+    name: "Loading name...",
     email: "johndoe@example.com",
     profileImage: "/user.png",
     id: "12345",
@@ -23,7 +26,9 @@ const storeSlice = createSlice({
   reducers: {
     setToken: (state, action: { payload: string }) => {
       state.token = action.payload;
-      typeof window != "undefined" && window.localStorage && window.localStorage?.setItem("token", JSON.stringify(action.payload));
+      typeof window != "undefined" &&
+        window.localStorage &&
+        window.localStorage?.setItem("token", JSON.stringify(action.payload));
     },
     updateName: (state, action: { payload: string }) => {
       state.profileData.name = action.payload;
@@ -39,13 +44,15 @@ const storeSlice = createSlice({
     },
     removeToken: (state) => {
       state.token = null;
-      typeof window != "undefined" && window.localStorage && window.localStorage?.getItem("token")
-    && window.localStorage?.removeItem("token")
-      
+      typeof window != "undefined" &&
+        window.localStorage &&
+        window.localStorage?.getItem("token") &&
+        window.localStorage?.removeItem("token");
     },
   },
 });
 
-export const { setToken,updateAllTasks, updateProfileDetails, updateName, updateProfileImage, removeToken } = storeSlice.actions;
+export const { setToken, updateAllTasks, updateProfileDetails, updateName, updateProfileImage, removeToken } =
+  storeSlice.actions;
 
 export default storeSlice.reducer;
