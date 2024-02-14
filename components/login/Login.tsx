@@ -13,8 +13,9 @@ const LoginComponent: React.FC = () => {
   const router = useRouter();
 
   const [values, setValues] = useState<LoginFormValuesType>({
-    email: "",
-    password: "",
+    email: "test@gmail.com",
+    password: "Test@123",
+    showPassword: false,
     nameError: "",
     emailError: "",
     passwordError: "",
@@ -68,7 +69,7 @@ const LoginComponent: React.FC = () => {
           setValues({ ...values, passwordError: res, isSubmitting: false });
         } else {
           const loginMessage = "Login succesful redircting to tasks"
-          setValues({ ...values, email: "", password: "",passwordError:loginMessage, isSubmitting: false });
+          setValues({ ...values, email: "", password: "", passwordError: loginMessage, isSubmitting: false });
           let data = JSON.parse(res);
           dispatch(
             updateProfileDetails({
@@ -88,8 +89,11 @@ const LoginComponent: React.FC = () => {
       return;
     }
   };
+  const handleShowPasswordToggle=()=>{
+    setValues({...values,showPassword:!showPassword})
+  }
 
-  const { email, password, emailError, passwordError, isSubmitting } = values;
+  const { email, password, emailError, showPassword, passwordError, isSubmitting } = values;
   const signupText = "Or, You can simply";
   return (
     <div className="flex justify-center w-80 sm:w-96 items-center min-h-full">
@@ -108,21 +112,22 @@ const LoginComponent: React.FC = () => {
 
             {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
           </div>
-          <div className="">
+          <div className="relative">
             <CustomInput
-              type="password"
+              type={showPassword ? "text" : "password"} 
               name="password"
               placeholder="Password"
               value={password}
               onChange={handleChange}
               className="w-full p-2 border rounded-md text-black"
             />
+            <button type="button" onClick={handleShowPasswordToggle} className="p-1 px-2 bg-blue-500 rounded-md absolute right-1 top-[5px] text-white-500">{showPassword?"Show":"Hide"}</button>
             {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
           </div>
           <SubmitButton
             className=""
             type="submit"
-            onClick={() => {}}
+            onClick={() => { }}
             text={isSubmitting ? "Loginin..." : "Login"}
             disable={isSubmitting || (emailError !== "" && passwordError !== "")}
           />

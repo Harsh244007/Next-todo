@@ -33,6 +33,7 @@ export type LoginFormValuesType = {
   password: string;
   emailError: string;
   passwordError: string;
+  showPassword:boolean;
   isSubmitting: boolean;
   name?: string;
   nameError?: string;
@@ -62,3 +63,12 @@ export type ParticlesTypes ={
   ease?: number;
   refresh?: boolean;
 }
+
+
+export type updateType = {
+id:string,
+newStatus:string,
+}
+export type useOptimisticUpdateType = {
+  update: (id:string) => string;
+};

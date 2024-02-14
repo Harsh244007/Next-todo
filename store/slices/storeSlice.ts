@@ -1,5 +1,5 @@
 "use client";
-import { storeProfileType, storeTasksType, storeType } from "@/types/commonTypes";
+import { storeProfileType, storeTasksType, storeType, updateType } from "@/types/commonTypes";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: storeType = {
@@ -36,6 +36,9 @@ const storeSlice = createSlice({
     updateProfileImage: (state, action: { payload: string }) => {
       state.profileData.profileImage = action.payload;
     },
+    updateTask: (state, action: { payload: updateType }) => {
+      state.tasks.find((e)=>e._id==action.payload.id?[e.status=action.payload.newStatus]:e) 
+    },
     updateProfileDetails: (state, action: { payload: storeProfileType }) => {
       state.profileData = action.payload;
     },
@@ -52,7 +55,7 @@ const storeSlice = createSlice({
   },
 });
 
-export const { setToken, updateAllTasks, updateProfileDetails, updateName, updateProfileImage, removeToken } =
+export const { setToken,updateTask, updateAllTasks, updateProfileDetails, updateName, updateProfileImage, removeToken } =
   storeSlice.actions;
 
 export default storeSlice.reducer;

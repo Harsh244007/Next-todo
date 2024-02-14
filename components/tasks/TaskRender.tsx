@@ -3,6 +3,7 @@ import React, { memo, useState } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "./../../helpers/validations";
+import useOptimisticUpdate from "@/helpers/useOptimisticUpdate";
 
 type TaskRemderType = {
   filterStatus: string;
@@ -12,6 +13,8 @@ type TaskRemderType = {
 };
 
 const TaskRender = (props: TaskRemderType) => {
+  const {update} = useOptimisticUpdate()
+
   const { profileData,  token, tasks } = useSelector((state: RootState) => state.store);
   const dispatch = useDispatch();
   const [taskToDelete, setTaskToDelete] = useState<storeTasksType | null>(null);
@@ -33,19 +36,9 @@ const TaskRender = (props: TaskRemderType) => {
   };
 
   const updateTaskStatus = async (taskId: string, newStatus: string) => {
-    try {
-      await fetch(`api/routes/tasks/status/${taskId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      props.reFetchData();
-    } catch (error) {
-      console.error("Error updating task status:", error);
-    }
+    update({id:taskId,newStatus})
+    console.log("update started",tasks,taskId,newStatus)
+    props.reFetchData();
   };
 
   const handleDeleteClick = (task: storeTasksType) => {
