@@ -12,12 +12,14 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
     "bcrypt": "^5.1.1",
+    "critters": "^0.0.20",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-redux": "^9.0.3"
+    "react-redux": "^9.0.3",
+    "sharp": "^0.33.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
