@@ -109,27 +109,27 @@ const SignupComponent: React.FC = () => {
             />
             {nameError && <p className="text-red-500 mt-1">{nameError}</p>}
           </div>
-          <div className="relative">
+          <div className="">
             <CustomInput
-              type={showPassword ? "text" : "password"}
+              type={"text"}
               name="email"
               placeholder="Email"
               value={email}
               onChange={handleChange}
               className="w-full p-2 border rounded-md text-black"
             />
-            <button type="button" onClick={handleShowPasswordToggle} className="p-1 px-2 bg-blue-500 rounded-md absolute right-1 top-[5px] text-white-500">{showPassword ? "Show" : "Hide"}</button>
             {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
           </div>
-          <div className="">
+          <div className="relative">
             <CustomInput
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               value={password}
               onChange={handleChange}
               className="w-full p-2 border rounded-md text-black"
             />
+            <button type="button" onClick={handleShowPasswordToggle} className="p-1 px-2 bg-blue-500 rounded-md absolute right-1 top-[5px] text-white-500">{showPassword ? "Show" : "Hide"}</button>
             {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
           </div>
           <SubmitButton

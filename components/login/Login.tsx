@@ -13,7 +13,7 @@ const LoginComponent: React.FC = () => {
   const router = useRouter();
 
   const [values, setValues] = useState<LoginFormValuesType>({
-    email: "test@gmail.com",
+    email: "tester@gmail.com",
     password: "Test@123",
     showPassword: false,
     nameError: "",
