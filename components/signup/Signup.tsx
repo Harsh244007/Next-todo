@@ -14,6 +14,7 @@ const SignupComponent: React.FC = () => {
     email: "",
     password: "",
     nameError: "",
+    showPassword: false,
     emailError: "",
     passwordError: "",
     isSubmitting: false,
@@ -64,19 +65,19 @@ const SignupComponent: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password,name }),
+          body: JSON.stringify({ email, password, name }),
         });
-        
-        
+
+
         if (response.status !== 201) {
           const res = await response.text();
           setValues({ ...values, passwordError: res, isSubmitting: false });
-        }else{
+        } else {
           const responseMessage = "User Created successfully. Rediecting to login."
-          setValues({ ...values, passwordError: responseMessage, isSubmitting: false });  
-          setTimeout(()=>{
+          setValues({ ...values, passwordError: responseMessage, isSubmitting: false });
+          setTimeout(() => {
             router.push("/login")
-          },2000)
+          }, 2000)
         }
       } catch (error) {
         console.error("Error:", error);
@@ -85,7 +86,11 @@ const SignupComponent: React.FC = () => {
     }
   };
 
-  const { name, email, password, nameError, emailError, passwordError, isSubmitting } = values;
+  const { name, showPassword, email, password, nameError, emailError, passwordError, isSubmitting } = values;
+  const handleShowPasswordToggle = () => {
+    setValues({ ...values, showPassword: !showPassword })
+  }
+
   const signupText = "Or, you can simply";
 
   return (
@@ -104,15 +109,16 @@ const SignupComponent: React.FC = () => {
             />
             {nameError && <p className="text-red-500 mt-1">{nameError}</p>}
           </div>
-          <div className="">
+          <div className="relative">
             <CustomInput
-              type="email"
+              type={showPassword ? "text" : "password"}
               name="email"
               placeholder="Email"
               value={email}
               onChange={handleChange}
               className="w-full p-2 border rounded-md text-black"
             />
+            <button type="button" onClick={handleShowPasswordToggle} className="p-1 px-2 bg-blue-500 rounded-md absolute right-1 top-[5px] text-white-500">{showPassword ? "Show" : "Hide"}</button>
             {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
           </div>
           <div className="">
@@ -129,7 +135,7 @@ const SignupComponent: React.FC = () => {
           <SubmitButton
             className=""
             type="submit"
-            onClick={() => {}}
+            onClick={() => { }}
             text={isSubmitting ? "Signing Up..." : "Sign Up"}
             disable={
               isSubmitting ||
